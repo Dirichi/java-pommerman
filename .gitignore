@@ -4,7 +4,7 @@
 \.idea/
 \out/
 *.iml
-\.jar
+*.jar
 res/gamelogs/json/
 
 res/gamelogs/
