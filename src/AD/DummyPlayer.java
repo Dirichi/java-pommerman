@@ -1,4 +1,4 @@
-package OneAD.players;
+package AD;
 
 import core.GameState;
 import players.Player;
@@ -22,6 +22,6 @@ public class DummyPlayer extends Player {
 
     @Override
     public Player copy() {
-        return new OneAD.players.DummyPlayer(playerID);
+        return new DummyPlayer(playerID);
     }
 }
