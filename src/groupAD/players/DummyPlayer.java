@@ -1,4 +1,4 @@
-package AD;
+package groupAD.players;
 
 import core.GameState;
 import players.Player;
