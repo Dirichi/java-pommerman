@@ -47,7 +47,7 @@ public class ExperimentConfig {
         Game game = buildGame();
         ArrayList<Player> players = buildPlayers();
         game.setPlayers(players);
-        List<RunResult> results = Run.runGames(game, seeds, 5, false);
+        List<RunResult> results = Run.runGames(game, seeds, 5, false, false);
         RunResult testPlayerResult = results.stream()
                 .filter(result -> result.getPlayerId() == playerUnderTest.getPlayerID())
                 .findFirst()

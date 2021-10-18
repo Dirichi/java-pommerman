@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Run {
 
-    public static List<RunResult> runGames(Game g, long seeds[], int repetitions, boolean useSeparateThreads) {
+    public static List<RunResult> runGames(Game g, long seeds[], int repetitions, boolean useSeparateThreads, boolean verbose) {
         int numPlayers = g.getPlayers().size();
         int[] winCount = new int[numPlayers];
         int[] tieCount = new int[numPlayers];
@@ -25,7 +25,10 @@ public class Run {
             for (int i = 0; i < repetitions; i++) {
                 long playerSeed = System.currentTimeMillis();
 
-                System.out.print( playerSeed + ", " + seed + ", " + (s*repetitions + i) + "/" + totalNgames + ", ");
+                //Verbose output
+                if (verbose) {
+                    System.out.print( playerSeed + ", " + seed + ", " + (s*repetitions + i) + "/" + totalNgames + ", ");
+                }
 
                 g.reset(seed);
                 EventsStatistics.REP = i;
@@ -58,9 +61,7 @@ public class Run {
             }
         }
 
-        RunResult[] results = new RunResult[4];
-        //Done, show stats
-        System.out.println("N \tWin \tTie \tLoss \tPlayer (overtime average)");
+        RunResult[] results = new RunResult[numPlayers];
         for (int pIdx = 0; pIdx < numPlayers; pIdx++) {
             int playerId = g.getPlayers().get(pIdx).getPlayerID();
 
