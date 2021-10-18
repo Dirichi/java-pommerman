@@ -19,7 +19,7 @@ public class Experiments {
     private static final ExperimentConfig TEAM_FOUR_VISIBILITY = new ExperimentConfig(
             "Team 4 Visibility", Types.GAME_MODE.TEAM, 4);
 
-    private static final Map<String, ExperimentConfig> EXPERINMENT_CONFIG_MAP = Map.<String, ExperimentConfig>of(
+    private static final Map<String, ExperimentConfig> EXPERINMENT_CONFIG_MAP = Map.of(
             "1", FFA_FULL_VISIBILITY,
             "2", TEAM_FULL_VISIBILITY,
             "3", FFA_TWO_VISIBILITY,

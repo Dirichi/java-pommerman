@@ -47,7 +47,14 @@ public class ExperimentConfig {
         Game game = buildGame();
         ArrayList<Player> players = buildPlayers();
         game.setPlayers(players);
-        Run.runGames(game, seeds, 1, false);
+        List<RunResult> results = Run.runGames(game, seeds, 5, false);
+        RunResult testPlayerResult = results.stream()
+                .filter(result -> result.getPlayerId() == playerUnderTest.getPlayerID())
+                .findFirst()
+                .get();
+        // Print results
+        String resultString = testPlayerResult.asString();
+        System.out.println(resultString);
     }
 
     private Game buildGame() {
