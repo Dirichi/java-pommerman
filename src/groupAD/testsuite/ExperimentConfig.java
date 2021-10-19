@@ -25,7 +25,7 @@ public class ExperimentConfig {
     }
 
     public String getTitle() {
-        return  this.title;
+        return this.title;
     }
 
     public ExperimentConfig setPlayerUnderTest(Player player) {
@@ -40,6 +40,13 @@ public class ExperimentConfig {
 
     public ExperimentConfig setGameSeed(long gameSeed) {
         this.gameSeed = gameSeed;
+        return this;
+    }
+
+    public ExperimentConfig reset() {
+        this.playerUnderTest = null;
+        this.controlPlayers = null;
+        this.gameSeed = 0;
         return this;
     }
 

@@ -50,6 +50,8 @@ public class Players {
             new MCTSParams(),
             Map.of("K", Math.sqrt(2) * 4));
 
+    /** Mapping of player_config_id to Player Config.
+     * Used in determining what player configs to run through the test suite. */
     private static final Map<String, PlayerConfig> PLAYER_CONFIG_MAP = Map.of(
             "1", DEFAULT_MCTS,
             "2", DEFAULT_RHEA,

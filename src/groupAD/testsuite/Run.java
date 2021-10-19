@@ -27,7 +27,7 @@ public class Run {
 
                 //Verbose output
                 if (verbose) {
-                    System.out.print( playerSeed + ", " + seed + ", " + (s*repetitions + i) + "/" + totalNgames + ", ");
+                    System.out.println( playerSeed + ", " + seed + ", " + (s*repetitions + i) + "/" + totalNgames + ", ");
                 }
 
                 g.reset(seed);

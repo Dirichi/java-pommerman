@@ -15,17 +15,15 @@ public class TestSuite {
         long gameSeed = System.currentTimeMillis();
         // Game parameters
         long[] seeds = new long[]{93988, 19067, 64416, 83884, 55636, 27599, 44350, 87872, 40815, 11772};
-        List<String> testPlayerConfigIds = getFlags(args, "playerConfigIds");
-        List<String> experimentConfigIds = getFlags(args, "experimentConfigIds");
-        System.out.printf("Player Config Ids: %s%n", testPlayerConfigIds);
+        List<String> playerConfigIds = getFlags(args, "player_config_ids");
+        List<String> experimentConfigIds = getFlags(args, "experiment_config_ids");
+        System.out.printf("Player Config Ids: %s%n", playerConfigIds);
         System.out.printf("Experiment Config Ids: %s%n", experimentConfigIds);
 
         Players playersHelper = new Players(gameSeed);
-        List<Player> defaultControlPlayers = playersHelper.buildDefaultControlPlayers();
-
         List<PlayerConfig> playerConfigsToTest;
-        if (!testPlayerConfigIds.isEmpty()) {
-            playerConfigsToTest = playersHelper.getPlayerConfigsByIds(testPlayerConfigIds);
+        if (!playerConfigIds.isEmpty()) {
+            playerConfigsToTest = playersHelper.getPlayerConfigsByIds(playerConfigIds);
         } else {
             playerConfigsToTest = playersHelper.getAllPlayerConfigs();
         }
@@ -47,7 +45,8 @@ public class TestSuite {
                         playerConfig.getTitle());
                 System.out.println(message);
 
-                experiment.setControlPlayers(defaultControlPlayers)
+                experiment.reset()
+                        .setControlPlayers(playersHelper.buildDefaultControlPlayers())
                         .setPlayerUnderTest(playerConfig.buildPlayer())
                         .setGameSeed(gameSeed)
                         .run(seeds);
@@ -57,6 +56,7 @@ public class TestSuite {
 
     public static List<String> getFlags(String[] args, String flagKey) {
         String key = String.format("--%s=", flagKey);
+
         return Arrays.stream(Arrays.stream(args)
                         .map(String::trim)
                         .filter(arg -> arg.startsWith(key))
