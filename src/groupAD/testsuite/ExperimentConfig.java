@@ -33,15 +33,11 @@ public class ExperimentConfig {
 
     public ExperimentConfig setPlayerConfig(PlayerConfig config) {
         this.playerConfig = config;
-        playerConfig.reset();
         return this;
     }
 
     public ExperimentConfig setControlPlayerConfigs(List<PlayerConfig> players) {
         this.controlPlayerConfigs = players;
-        for (PlayerConfig config: controlPlayerConfigs) {
-            config.reset();
-        }
         return this;
     }
 
@@ -57,17 +53,14 @@ public class ExperimentConfig {
         return this;
     }
 
-    public String run(long[] seeds) {
-        Game game = buildGame();
-        ArrayList<Player> players = buildPlayers();
-        game.setPlayers(players);
-        List<RunResult> results = Run.runGames(game, seeds, 5, false, true);
-        RunResult playerResult = results.stream()
-                .filter(result -> result.getPlayerId() == playerConfig.getPlayerId())
-                .findFirst()
-                .get();
+    public String run(long[] seeds, int repetitions) {
+        RunResult result = null;
+        for (int i = 0; i < repetitions; i++) {
+            RunResult currentResult = runOneRep(seeds);
+            result = currentResult.combine(result);
+        }
         // Print results
-        String resultString = playerResult.asString();
+        String resultString = result.asString();
         String experimentSummary = String.format(
                 "Experiment: (%s), Player: (%s), results: %s",
                 title,
@@ -75,6 +68,18 @@ public class ExperimentConfig {
                 resultString);
         System.out.println(experimentSummary);
         return experimentSummary;
+    }
+
+    private RunResult runOneRep(long[] seeds) {
+        Game game = buildGame();
+        ArrayList<Player> players = buildPlayers();
+        game.setPlayers(players);
+        List<RunResult> results = Run.runGames(game, seeds, 1, false, false);
+        return results
+                .stream()
+                .filter(result -> result.getPlayerId() == playerConfig.getPlayerId())
+                .findFirst()
+                .get();
     }
 
     private Game buildGame() {
@@ -85,6 +90,10 @@ public class ExperimentConfig {
     private ArrayList<Player> buildPlayers() {
         ArrayList<PlayerConfig> playerConfigs = new ArrayList<>(controlPlayerConfigs);
         playerConfigs.add(playerConfig);
+        // Reset PlayerConfigs
+        for (PlayerConfig config: playerConfigs) {
+            config.reset();
+        }
         // Shuffle positions to make sure that the tested player
         // does not learn to play only from one position in the
         // game.

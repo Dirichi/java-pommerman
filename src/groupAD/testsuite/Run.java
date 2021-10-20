@@ -65,17 +65,13 @@ public class Run {
         for (int pIdx = 0; pIdx < numPlayers; pIdx++) {
             int playerId = g.getPlayers().get(pIdx).getPlayerID();
 
-            double winPerc = winCount[pIdx] * 100.0 / (double)totalNgames;
-            double tiePerc = tieCount[pIdx] * 100.0 / (double)totalNgames;
-            double lossPerc = lossCount[pIdx] * 100.0 / (double)totalNgames;
-            double overtimesAvg = overtimeCount[pIdx] / (double)totalNgames;
-
             RunResult runResult = new RunResult()
-                    .setWinPercentage(winPerc)
-                    .setTiePercentage(tiePerc)
-                    .setLossPercentage(lossPerc)
-                    .setOverTimeAverage(overtimesAvg)
-                    .setPlayerId(playerId);
+                    .setWins(winCount[pIdx])
+                    .setTies(tieCount[pIdx])
+                    .setLosses(lossCount[pIdx])
+                    .setOverTimes(overtimeCount[pIdx])
+                    .setPlayerId(playerId)
+                    .setTotalGames(totalNgames);
 
             results[pIdx] = runResult;
         }
