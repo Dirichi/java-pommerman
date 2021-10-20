@@ -1,18 +1,22 @@
 package groupAD.testsuite;
 
 import core.Game;
+import groupAD.players.PlayerConfig;
 import players.Player;
 import utils.Types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ExperimentConfig {
     private final String title;
     private final Types.GAME_MODE gameMode;
     private final int visionRange;
-    private Player playerUnderTest;
-    private List<Player> controlPlayers;
+    private PlayerConfig playerConfig;
+    private List<PlayerConfig> controlPlayerConfigs;
     private long gameSeed;
 
     public ExperimentConfig(
@@ -28,13 +32,17 @@ public class ExperimentConfig {
         return this.title;
     }
 
-    public ExperimentConfig setPlayerUnderTest(Player player) {
-        this.playerUnderTest = player;
+    public ExperimentConfig setPlayerConfig(PlayerConfig config) {
+        this.playerConfig = config;
+        playerConfig.reset();
         return this;
     }
 
-    public ExperimentConfig setControlPlayers(List<Player> players) {
-        this.controlPlayers = players;
+    public ExperimentConfig setControlPlayerConfigs(List<PlayerConfig> players) {
+        this.controlPlayerConfigs = players;
+        for (PlayerConfig config: controlPlayerConfigs) {
+            config.reset();
+        }
         return this;
     }
 
@@ -44,24 +52,30 @@ public class ExperimentConfig {
     }
 
     public ExperimentConfig reset() {
-        this.playerUnderTest = null;
-        this.controlPlayers = null;
+        this.playerConfig = null;
+        this.controlPlayerConfigs = null;
         this.gameSeed = 0;
         return this;
     }
 
-    public void run(long[] seeds) {
+    public String run(long[] seeds) {
         Game game = buildGame();
         ArrayList<Player> players = buildPlayers();
         game.setPlayers(players);
-        List<RunResult> results = Run.runGames(game, seeds, 5, false, false);
-        RunResult testPlayerResult = results.stream()
-                .filter(result -> result.getPlayerId() == playerUnderTest.getPlayerID())
+        List<RunResult> results = Run.runGames(game, seeds, 5, false, true);
+        RunResult playerResult = results.stream()
+                .filter(result -> result.getPlayerId() == playerConfig.getPlayerId())
                 .findFirst()
                 .get();
         // Print results
-        String resultString = testPlayerResult.asString();
-        System.out.println(resultString);
+        String resultString = playerResult.asString();
+        String experimentSummary = String.format(
+                "Experiment: (%s), Player: (%s), results: %s",
+                title,
+                playerConfig.getTitle(),
+                resultString);
+        System.out.println(experimentSummary);
+        return experimentSummary;
     }
 
     private Game buildGame() {
@@ -70,12 +84,20 @@ public class ExperimentConfig {
     }
 
     private ArrayList<Player> buildPlayers() {
-        ArrayList<Player> players = new ArrayList<>(controlPlayers);
-        players.add(playerUnderTest);
-
+        ArrayList<PlayerConfig> playerConfigs = new ArrayList<>(controlPlayerConfigs);
+        playerConfigs.add(playerConfig);
+        // Shuffle positions to make sure that the tested player
+        // does not learn to play only from one position in the
+        // game.
+        Collections.shuffle(playerConfigs, new Random(gameSeed));
+        for (int i = 0; i < playerConfigs.size(); i++) {
+            int playerID = Types.TILETYPE.AGENT0.getKey() + i;
+            playerConfigs.get(i).setSeed(gameSeed).setPlayerId(playerID);
+        }
+        List<Player> players = playerConfigs.stream().map(config -> config.buildPlayer()).collect(Collectors.toList());
         // Make sure we have exactly NUM_PLAYERS players
         assert players.size() == Types.NUM_PLAYERS : "There should be " + Types.NUM_PLAYERS +
                 " added to the game, but there are " + players.size();
-        return players;
+        return new ArrayList(players);
     }
 }

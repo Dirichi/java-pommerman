@@ -52,6 +52,16 @@ public class PlayerConfig<T extends  Player> {
         return this;
     }
 
+    public PlayerConfig<T> reset() {
+        this.playerId = 0;
+        this.seed = 0;
+        return this;
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
     public Player buildPlayer()  {
         Constructor<Player> playerConstructor = getPlayerConstructor();
         Player player = initPlayer(playerConstructor, seed, playerId);

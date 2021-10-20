@@ -1,26 +1,17 @@
 package groupAD.players;
 
-import players.Player;
 import players.SimpleEvoAgent;
 import players.mcts.MCTSParams;
 import players.mcts.MCTSPlayer;
 import players.rhea.RHEAPlayer;
 import players.rhea.utils.Constants;
 import players.rhea.utils.RHEAParams;
-import utils.Types;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Players {
-    private final long seed;
-
-    public Players(long seed) {
-        this.seed = seed;
-    }
-
     private static final PlayerConfig DEFAULT_MCTS = new PlayerConfig(
             "Default MCTS",
             MCTSPlayer.class,
@@ -62,11 +53,8 @@ public class Players {
             );
 
     public List<PlayerConfig> getPlayerConfigsByIds(List<String> ids) {
-        // By default, the player under test is the last player
-        // TODO: Make this shuffleable
-        int playerID = Types.TILETYPE.AGENT0.getKey() + 4;
         return  ids.stream()
-                .map(id -> PLAYER_CONFIG_MAP.get(id).setPlayerId(playerID).setSeed(seed))
+                .map(id -> PLAYER_CONFIG_MAP.get(id))
                 .collect(Collectors.toList());
     }
 
@@ -76,21 +64,28 @@ public class Players {
         );
     }
 
-    public ArrayList<Player> buildDefaultControlPlayers() {
-        ArrayList<Player> players = new ArrayList<>();
-        int playerID = Types.TILETYPE.AGENT0.getKey();
-
+    public List<PlayerConfig> getDefaultControlPlayerConfigs() {
         MCTSParams mctsParams = new MCTSParams();
         mctsParams.stop_type = mctsParams.STOP_ITERATIONS;
-        mctsParams.heuristic_method = mctsParams.CUSTOM_HEURISTIC;
+        PlayerConfig<MCTSPlayer> controlMCTS = new PlayerConfig(
+                "Control MCTS",
+                MCTSPlayer.class,
+                mctsParams,
+                Map.of("heuristic_method", mctsParams.CUSTOM_HEURISTIC)
+        );
 
-        RHEAParams rheaParams = new RHEAParams();
-        rheaParams.heurisic_type = Constants.CUSTOM_HEURISTIC;
+        PlayerConfig<RHEAPlayer> controlRhea = new PlayerConfig(
+                "Control RHEA",
+                RHEAPlayer.class,
+                new RHEAParams(),
+                Map.of("heuristic_type", Constants.CUSTOM_HEURISTIC)
+        );
 
-        players.add(new MCTSPlayer(seed, playerID++, mctsParams));
-        players.add(new RHEAPlayer(seed, playerID++, rheaParams));
-        players.add(new SimpleEvoAgent(seed, playerID++));
+        PlayerConfig<SimpleEvoAgent> controlSimpleEvo = new PlayerConfig(
+                "Control Simple Evo",
+                SimpleEvoAgent.class
+        );
 
-        return players;
+        return List.of(controlMCTS, controlRhea, controlSimpleEvo);
     }
 }

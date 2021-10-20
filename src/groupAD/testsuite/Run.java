@@ -79,6 +79,19 @@ public class Run {
 
             results[pIdx] = runResult;
         }
+
+        //Done, show stats
+        System.out.println("N \tWin \tTie \tLoss \tPlayer (overtime average)");
+        for (int pIdx = 0; pIdx < numPlayers; pIdx++) {
+            String player = g.getPlayers().get(pIdx).getClass().toString().replaceFirst("class ", "");
+
+            double winPerc = winCount[pIdx] * 100.0 / (double)totalNgames;
+            double tiePerc = tieCount[pIdx] * 100.0 / (double)totalNgames;
+            double lossPerc = lossCount[pIdx] * 100.0 / (double)totalNgames;
+            double overtimesAvg = overtimeCount[pIdx] / (double)totalNgames;
+
+            System.out.println(totalNgames + "\t" + winPerc + "%\t" + tiePerc + "%\t" + lossPerc + "%\t" + player + " (" + overtimesAvg + ")" );
+        }
         return List.copyOf(Arrays.asList(results));
     }
 }

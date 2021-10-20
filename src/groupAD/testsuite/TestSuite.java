@@ -3,8 +3,8 @@ package groupAD.testsuite;
 
 import groupAD.players.PlayerConfig;
 import groupAD.players.Players;
-import players.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class TestSuite {
         System.out.printf("Player Config Ids: %s%n", playerConfigIds);
         System.out.printf("Experiment Config Ids: %s%n", experimentConfigIds);
 
-        Players playersHelper = new Players(gameSeed);
+        Players playersHelper = new Players();
         List<PlayerConfig> playerConfigsToTest;
         if (!playerConfigIds.isEmpty()) {
             playerConfigsToTest = playersHelper.getPlayerConfigsByIds(playerConfigIds);
@@ -37,6 +37,7 @@ public class TestSuite {
         }
 
 
+        ArrayList<String> experimentResults = new ArrayList();
         for (ExperimentConfig experiment : experiments) {
             for (PlayerConfig playerConfig : playerConfigsToTest) {
                 String message = String.format(
@@ -45,12 +46,17 @@ public class TestSuite {
                         playerConfig.getTitle());
                 System.out.println(message);
 
-                experiment.reset()
-                        .setControlPlayers(playersHelper.buildDefaultControlPlayers())
-                        .setPlayerUnderTest(playerConfig.buildPlayer())
+                String result = experiment.reset()
+                        .setControlPlayerConfigs(playersHelper.getDefaultControlPlayerConfigs())
+                        .setPlayerConfig(playerConfig)
                         .setGameSeed(gameSeed)
                         .run(seeds);
+                experimentResults.add(result);
             }
+        }
+
+        for (String result: experimentResults) {
+            System.out.println(result);
         }
     }
 

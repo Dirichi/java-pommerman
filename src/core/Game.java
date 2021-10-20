@@ -450,15 +450,15 @@ public class Game {
 //        System.out.println("GameOver: " + Arrays.toString(results));
 //        System.out.println(Arrays.toString(results));
 
-//        System.out.print("[");
-//        for(int i = 0; i < results.length; ++i)
-//        {
-//            System.out.print(results[i] + (" (" + playerOvertimes[i] + ")"));
-//            if(i == results.length-1)
-//                System.out.println("]");
-//            else
-//                System.out.print(", ");
-//        }
+        System.out.print("[");
+        for(int i = 0; i < results.length; ++i)
+        {
+            System.out.print(results[i] + (" (" + playerOvertimes[i] + ")"));
+            if(i == results.length-1)
+                System.out.println("]");
+            else
+                System.out.print(", ");
+        }
 
 //        }
         return results;
