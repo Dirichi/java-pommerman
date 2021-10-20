@@ -8,7 +8,6 @@ import utils.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class ExperimentConfig {
@@ -89,7 +88,7 @@ public class ExperimentConfig {
         // Shuffle positions to make sure that the tested player
         // does not learn to play only from one position in the
         // game.
-        Collections.shuffle(playerConfigs, new Random(gameSeed));
+        Collections.shuffle(playerConfigs);
         for (int i = 0; i < playerConfigs.size(); i++) {
             int playerID = Types.TILETYPE.AGENT0.getKey() + i;
             playerConfigs.get(i).setSeed(gameSeed).setPlayerId(playerID);
