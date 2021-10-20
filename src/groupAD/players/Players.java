@@ -1,11 +1,7 @@
 package groupAD.players;
 
-import players.SimpleEvoAgent;
 import players.mcts.MCTSParams;
 import players.mcts.MCTSPlayer;
-import players.rhea.RHEAPlayer;
-import players.rhea.utils.Constants;
-import players.rhea.utils.RHEAParams;
 
 import java.util.List;
 import java.util.Map;
@@ -16,10 +12,6 @@ public class Players {
             "Default MCTS",
             MCTSPlayer.class,
             new MCTSParams());
-    private static final PlayerConfig DEFAULT_RHEA = new PlayerConfig(
-            "Default RHEA",
-            RHEAPlayer.class,
-            new RHEAParams());
     private static final PlayerConfig MCTS_SMALL_K = new PlayerConfig(
             "MCTS (K = sqrt(2) / 2)",
             MCTSPlayer.class,
@@ -45,11 +37,10 @@ public class Players {
      * Used in determining what player configs to run through the test suite. */
     private static final Map<String, PlayerConfig> PLAYER_CONFIG_MAP = Map.of(
             "1", DEFAULT_MCTS,
-            "2", DEFAULT_RHEA,
-            "3", MCTS_SMALL_K,
-            "4", MCTS_SMALLER_K,
-            "5", MCTS_BIG_K,
-            "6", MCTS_BIGGER_K
+            "2", MCTS_SMALL_K,
+            "3", MCTS_SMALLER_K,
+            "4", MCTS_BIG_K,
+            "5", MCTS_BIGGER_K
             );
 
     public List<PlayerConfig> getPlayerConfigsByIds(List<String> ids) {
@@ -65,27 +56,34 @@ public class Players {
     }
 
     public List<PlayerConfig> getDefaultControlPlayerConfigs() {
-        MCTSParams mctsParams = new MCTSParams();
-        mctsParams.stop_type = mctsParams.STOP_ITERATIONS;
-        PlayerConfig<MCTSPlayer> controlMCTS = new PlayerConfig(
-                "Control MCTS",
+        MCTSParams mctsParamsOne = new MCTSParams();
+        mctsParamsOne.stop_type = mctsParamsOne.STOP_ITERATIONS;
+        PlayerConfig<MCTSPlayer> controlMCTSOne = new PlayerConfig(
+                "Control MCTS One",
                 MCTSPlayer.class,
-                mctsParams,
-                Map.of("heuristic_method", mctsParams.CUSTOM_HEURISTIC)
+                mctsParamsOne,
+                Map.of("heuristic_method", mctsParamsOne.CUSTOM_HEURISTIC)
         );
 
-        PlayerConfig<RHEAPlayer> controlRhea = new PlayerConfig(
-                "Control RHEA",
-                RHEAPlayer.class,
-                new RHEAParams(),
-                Map.of("heuristic_type", Constants.CUSTOM_HEURISTIC)
+        MCTSParams mctsParamsTwo = new MCTSParams();
+        mctsParamsTwo.stop_type = mctsParamsOne.STOP_ITERATIONS;
+        PlayerConfig<MCTSPlayer> controlMCTSTwo = new PlayerConfig(
+                "Control MCTS Two",
+                MCTSPlayer.class,
+                mctsParamsTwo,
+                Map.of("heuristic_method", mctsParamsTwo.CUSTOM_HEURISTIC)
         );
 
-        PlayerConfig<SimpleEvoAgent> controlSimpleEvo = new PlayerConfig(
-                "Control Simple Evo",
-                SimpleEvoAgent.class
+        MCTSParams mctsParamsThree = new MCTSParams();
+        mctsParamsThree.stop_type = mctsParamsThree.STOP_ITERATIONS;
+        PlayerConfig<MCTSPlayer> controlMCTSThree = new PlayerConfig(
+                "Control MCTS Three",
+                MCTSPlayer.class,
+                mctsParamsThree,
+                Map.of("heuristic_method", mctsParamsThree.CUSTOM_HEURISTIC)
         );
 
-        return List.of(controlMCTS, controlRhea, controlSimpleEvo);
+
+        return List.of(controlMCTSOne, controlMCTSTwo, controlMCTSThree);
     }
 }
