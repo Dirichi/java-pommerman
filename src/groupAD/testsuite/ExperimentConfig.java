@@ -6,9 +6,10 @@ import players.Player;
 import utils.Types;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ExperimentConfig {
     private final String title;
@@ -56,7 +57,7 @@ public class ExperimentConfig {
     public String run(long[] seeds, int repetitions) {
         RunResult result = null;
         for (int i = 0; i < repetitions; i++) {
-            RunResult currentResult = runOneRep(seeds);
+            RunResult currentResult = runOneRep(seeds, i);
             result = currentResult.combine(result);
         }
         // Print results
@@ -70,9 +71,10 @@ public class ExperimentConfig {
         return experimentSummary;
     }
 
-    private RunResult runOneRep(long[] seeds) {
+    private RunResult runOneRep(long[] seeds, int repetitionIndex) {
         Game game = buildGame();
-        ArrayList<Player> players = buildPlayers();
+        int testPlayerIndex = repetitionIndex % Types.NUM_PLAYERS;
+        ArrayList<Player> players = buildPlayers(testPlayerIndex);
         game.setPlayers(players);
         List<RunResult> results = Run.runGames(game, seeds, 1, false, false);
         return results
@@ -87,22 +89,32 @@ public class ExperimentConfig {
         return new Game(gameSeed, Types.BOARD_SIZE, gameMode, title);
     }
 
-    private ArrayList<Player> buildPlayers() {
+    private ArrayList<Player> buildPlayers(int testPlayerIndex) {
+        int startId = Types.TILETYPE.AGENT0.getKey();
+        int endId = Types.TILETYPE.AGENT0.getKey() + Types.NUM_PLAYERS;
+        int testPlayerId = startId + testPlayerIndex;
+        List<Integer> controlPlayerIds = IntStream
+                .range(startId, endId)
+                .filter(id -> id != testPlayerId)
+                .boxed()
+                .collect(Collectors.toList());
+        playerConfig.reset().setSeed(gameSeed).setPlayerId(testPlayerId);
+
+        for (PlayerConfig config: controlPlayerConfigs) {
+            int playerId = controlPlayerIds.remove(0);
+            config.reset().setSeed(gameSeed).setPlayerId(playerId);
+        }
+
         ArrayList<PlayerConfig> playerConfigs = new ArrayList<>(controlPlayerConfigs);
         playerConfigs.add(playerConfig);
-        // Reset PlayerConfigs
-        for (PlayerConfig config: playerConfigs) {
-            config.reset();
-        }
-        // Shuffle positions to make sure that the tested player
-        // does not learn to play only from one position in the
-        // game.
-        Collections.shuffle(playerConfigs);
-        for (int i = 0; i < playerConfigs.size(); i++) {
-            int playerID = Types.TILETYPE.AGENT0.getKey() + i;
-            playerConfigs.get(i).setSeed(gameSeed).setPlayerId(playerID);
-        }
-        List<Player> players = playerConfigs.stream().map(config -> config.buildPlayer()).collect(Collectors.toList());
+        // Sort players by id because external code assumes that
+        // the Players are sorted by id
+        playerConfigs.sort(Comparator.comparing(PlayerConfig::getPlayerId));
+        List<Player> players = playerConfigs
+                .stream()
+                .map(PlayerConfig::buildPlayer)
+                .collect(Collectors.toList());
+
         // Make sure we have exactly NUM_PLAYERS players
         assert players.size() == Types.NUM_PLAYERS : "There should be " + Types.NUM_PLAYERS +
                 " added to the game, but there are " + players.size();

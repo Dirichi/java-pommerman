@@ -39,19 +39,19 @@ public class RunResult {
     }
 
     public double getWinPercentage() {
-        return wins * 100 / totalGames;
+        return wins * 100 / (double) totalGames;
     }
 
     public double getTiePercentage() {
-        return ties * 100 / totalGames;
+        return ties * 100 / (double) totalGames;
     }
 
     public double getOverTimeAverage() {
-        return overTimes / totalGames;
+        return overTimes / (double) totalGames;
     }
 
     public double getLossPercentage() {
-        return losses * 100 / totalGames;
+        return losses * 100 / (double) totalGames;
     }
 
     public int getPlayerId() {
@@ -72,6 +72,10 @@ public class RunResult {
 
     public int getTies() {
         return ties;
+    }
+
+    public int getOverTimes() {
+        return overTimes;
     }
 
     public String asString() {
@@ -103,12 +107,14 @@ public class RunResult {
         int combinedWins = wins + other.getWins();
         int combinedTies = ties + other.getTies();
         int combinedLosses = losses + other.getLosses();
+        int combinedOverTime = overTimes + other.getOverTimes();
 
         return new RunResult()
                 .setPlayerId(playerId)
                 .setWins(combinedWins)
                 .setTies(combinedTies)
                 .setLosses(combinedLosses)
+                .setOverTimes(combinedOverTime)
                 .setTotalGames(combinedTotalGames);
     }
 

@@ -26,9 +26,6 @@ public class Experiments {
     }
 
     public List<ExperimentConfig> getAllExperiments() {
-        return EXPERINMENT_CONFIG_MAP
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(EXPERINMENT_CONFIG_MAP.values());
     }
 }

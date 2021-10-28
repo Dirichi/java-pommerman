@@ -3,7 +3,6 @@ package groupAD.testsuite;
 
 import groupAD.players.PlayerConfig;
 import groupAD.players.Players;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,11 +14,8 @@ public class TestSuite {
         long gameSeed = System.currentTimeMillis();
         // Game parameters
         long[] seeds = new long[]{93988, 19067, 64416, 83884, 55636, 27599, 44350, 87872, 40815, 11772};
-        // Uncomment to use only one seed
-        // long[] seeds = new long[]{93988};
-        int repetitions = 5;
-        // Uncomment to run only one repetition
-        // int repetitions = 1;
+        int repetitions = 8;
+
         List<String> playerConfigIds = getFlags(args, "player_config_ids");
         List<String> experimentConfigIds = getFlags(args, "experiment_config_ids");
         System.out.printf("Player Config Ids: %s%n", playerConfigIds);
@@ -40,7 +36,6 @@ public class TestSuite {
         } else {
             experiments = experimentsHelper.getAllExperiments();
         }
-
 
         ArrayList<String> experimentResults = new ArrayList();
         for (ExperimentConfig experiment : experiments) {
