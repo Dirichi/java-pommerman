@@ -14,28 +14,21 @@ public class TestSuite {
         long gameSeed = System.currentTimeMillis();
         // Game parameters
         long[] seeds = new long[]{93988, 19067, 64416, 83884, 55636, 27599, 44350, 87872, 40815, 11772};
-        int repetitions = 8;
+//        long[] seeds = new long[]{93988};
 
-        List<String> playerConfigIds = getFlags(args, "player_config_ids");
-        List<String> experimentConfigIds = getFlags(args, "experiment_config_ids");
+        List<String> playerConfigIds = getListFlag(args, "player_config_ids", List.of("1"));
+        List<String> experimentConfigIds = getListFlag(args, "experiment_config_ids", List.of("1"));
+        int repetitions = getIntFlag(args, "repetitions", 1);
         System.out.printf("Player Config Ids: %s%n", playerConfigIds);
         System.out.printf("Experiment Config Ids: %s%n", experimentConfigIds);
+        System.out.printf("Repetitions: %s%n", repetitions);
 
         Players playersHelper = new Players();
-        List<PlayerConfig> playerConfigsToTest;
-        if (!playerConfigIds.isEmpty()) {
-            playerConfigsToTest = playersHelper.getPlayerConfigsByIds(playerConfigIds);
-        } else {
-            playerConfigsToTest = playersHelper.getAllPlayerConfigs();
-        }
+        List<PlayerConfig> playerConfigsToTest = playersHelper.getPlayerConfigsByIds(playerConfigIds);
 
         Experiments experimentsHelper = new Experiments();
-        List<ExperimentConfig> experiments;
-        if (!experimentConfigIds.isEmpty()) {
-            experiments = experimentsHelper.getExperimentsByIds(experimentConfigIds);
-        } else {
-            experiments = experimentsHelper.getAllExperiments();
-        }
+        List<ExperimentConfig> experiments = experimentsHelper.getExperimentsByIds(experimentConfigIds);
+
 
         ArrayList<String> experimentResults = new ArrayList();
         for (ExperimentConfig experiment : experiments) {
@@ -62,17 +55,27 @@ public class TestSuite {
         }
     }
 
-    public static List<String> getFlags(String[] args, String flagKey) {
-        String key = String.format("--%s=", flagKey);
+    private static List<String> getListFlag(String[] args, String flagKey, List<String> defaultValue) {
+        String rawValue = parseFlag(args, flagKey, "");
 
-        return Arrays.stream(Arrays.stream(args)
-                        .map(String::trim)
-                        .filter(arg -> arg.startsWith(key))
-                        .findFirst()
-                        .map(arg -> arg.split("=")[1])
-                        .orElse("")
-                        .split(","))
+        return Arrays.stream(rawValue.split(","))
                 .filter(arg -> !arg.isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    private static int getIntFlag(String[] args, String flagKey, int defaultValue) {
+        String rawValue = parseFlag(args, flagKey, "");
+        return rawValue.isEmpty() ? defaultValue : Integer.parseInt(rawValue);
+    }
+
+    private static String parseFlag(String[] args, String flagKey, String defaultFlagValue) {
+        String key = String.format("--%s=", flagKey);
+
+        return Arrays.stream(args)
+                .map(String::trim)
+                .filter(arg -> arg.startsWith(key))
+                .findFirst()
+                .map(arg -> arg.split("=")[1])
+                .orElse(defaultFlagValue);
     }
 }

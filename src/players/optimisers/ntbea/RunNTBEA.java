@@ -1,5 +1,7 @@
 package players.optimisers.ntbea;
 
+import groupAD.players.amafmcts.CustomMCTSParams;
+import groupAD.players.amafmcts.CustomMCTSPlayer;
 import players.optimisers.ParameterizedPlayer;
 import players.optimisers.evodef.EvaluatePommerman;
 import players.mcts.MCTSParams;
@@ -20,12 +22,11 @@ public class RunNTBEA {
         int nEvals = Integer.parseInt(args[0]);
         boolean topLevel = Boolean.parseBoolean(args[1]);
 
-        RHEAParams parameterSet = new RHEAParams();
-        ParameterizedPlayer player = new RHEAPlayer(0, 0, parameterSet);
+        CustomMCTSParams parameterSet = new CustomMCTSParams();
+        ParameterizedPlayer player = new CustomMCTSPlayer(0, 0, parameterSet);
+//        RHEAParams parameterSet = new RHEAParams();
+//        ParameterizedPlayer player = new RHEAPlayer(0, 0, parameterSet);
         parameterSet.printParameterSearchSpace();
-
-//        MCTSParams parameterSet = new MCTSParams();
-//        ParameterizedPlayer player = new MCTSPlayer(0, 0, parameterSet);
 
         // Optimising parameters
         Map<String, Object[]> params = parameterSet.getParameterValues();

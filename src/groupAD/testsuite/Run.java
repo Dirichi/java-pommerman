@@ -39,7 +39,7 @@ public class Run {
                 for (int p = 0; p < g.nPlayers(); p++) {
                     players.get(p).reset(playerSeed, p + Types.TILETYPE.AGENT0.getKey());
                 }
-                Types.RESULT[] results = g.run(useSeparateThreads);
+                Types.RESULT[] results = g.run(true);
 
                 for (int pIdx = 0; pIdx < numPlayers; pIdx++) {
                     switch (results[pIdx]) {

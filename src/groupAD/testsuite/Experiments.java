@@ -24,8 +24,4 @@ public class Experiments {
     public List<ExperimentConfig> getExperimentsByIds(List<String> ids) {
         return ids.stream().map(id -> EXPERINMENT_CONFIG_MAP.get(id)).collect(Collectors.toList());
     }
-
-    public List<ExperimentConfig> getAllExperiments() {
-        return new ArrayList<>(EXPERINMENT_CONFIG_MAP.values());
-    }
 }
